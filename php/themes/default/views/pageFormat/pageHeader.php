@@ -33,8 +33,8 @@
  		}
  	}
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
 	    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
@@ -45,6 +45,7 @@
 		<link rel="stylesheet" href="<?php print $this->request->getThemeUrlPath(); ?>/css/base.css" type="text/css" media="screen" />
 		<link rel="stylesheet" href="<?php print $this->request->getThemeUrlPath(); ?>/css/sets.css" type="text/css" media="screen" />
 
+		<script type="text/javascript">window.caBasePath = '<?php print $this->request->getBaseUrlPath(); ?>';</script>
 		<!--[if (!IE)|(gte IE 8)]><!-->
 		<link href="<?php print $this->request->getBaseUrlPath(); ?>/js/DV/viewer-datauri.css" media="screen" rel="stylesheet" type="text/css" />
 		<link href="<?php print $this->request->getBaseUrlPath(); ?>/js/DV/plain-datauri.css" media="screen" rel="stylesheet" type="text/css" />
@@ -66,7 +67,6 @@
 ';
 	}
 ?>
-	</head>
 		<script type="text/javascript">
 			// initialise plugins
 			jQuery(document).ready(function() {
@@ -94,6 +94,6 @@
 			</style>
 			<![endif]-->
 		<!-- super fish end menus -->
-		
+	</head>	
 	<body>
 		<div align="center">

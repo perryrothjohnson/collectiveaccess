@@ -43,7 +43,7 @@ class ElementsController extends BaseEditorController {
 		parent::__construct($po_request, $po_response, $pa_view_paths);
 	}
 	# -------------------------------------------------------
-	public function ListElements() {
+	public function Index() {
 		JavascriptLoadManager::register('tableList');
 	
 		$vo_dm = Datamodel::load();
@@ -64,28 +64,30 @@ class ElementsController extends BaseEditorController {
 		
 		
 		$t_element = $this->getElementObject();
-		$t_restriction = new ca_metadata_type_restrictions();
+		$t_restriction = new ca_metadata_type_restrictions(null, true);
 		
 		$this->view->setVar('available_settings',$t_element->getAvailableSettings());
 		$this->view->setVar('type_list', $t_restriction->getTypeListsForTables());
 			
 		$va_initial_values = array();
 		if($t_element->getPrimaryKey()){
-			//$t_element->getHierarchyChildrenAsQuery();
 			$va_sub_elements = array();
 			/* BaseModel::getHierarchyChildren orders by PK, but we need to order by rank */
 			$vo_db = new Db();
 			$qr_result = $vo_db->query("
-				SELECT * 
+				SELECT cmel.*, cme.* 
 				FROM ca_metadata_elements cme
-				INNER JOIN ca_metadata_element_labels AS cmel ON cme.element_id = cmel.element_id
+				LEFT JOIN ca_metadata_element_labels AS cmel ON cme.element_id = cmel.element_id
 				WHERE
 					cme.parent_id = ?
 				ORDER BY
 					cme.rank
 			",(int)$t_element->get('element_id'));
+			
 			while($qr_result->nextRow()){
-				$va_sub_elements[$qr_result->get('element_id')][$qr_result->get('locale_id')] = $qr_result->getRow();
+				$va_row = $qr_result->getRow();
+				if (!$va_row['name']) { $va_row['name'] = $va_row['element_code']; }
+				$va_sub_elements[$qr_result->get('element_id')][$qr_result->get('locale_id')] = $va_row;
 			}
 			$va_sub_elements = caExtractValuesByUserLocale($va_sub_elements);
 			$this->view->setVar('sub_elements',$va_sub_elements);
@@ -239,6 +241,18 @@ class ElementsController extends BaseEditorController {
 	
 			/* process settings */
 			if (is_array($va_settings = $t_element->getAvailableSettings())) {
+				$vb_need_to_update = false;
+				foreach($va_settings as $vs_setting_key => $va_setting_info) {
+					if (isset($va_setting_info['refreshOnChange']) && (bool)$va_setting_info['refreshOnChange']) {
+						$t_element->setSetting($vs_setting_key, $va_request['setting_'.$vs_setting_key]);
+						$vb_need_to_update = true;
+					}
+				}
+				if ($vb_need_to_update) { 
+					$t_element->update(); 
+					$va_settings = $t_element->getAvailableSettings();
+				}
+				
 				foreach($va_settings as $vs_setting_key => $va_setting_info) {
 					if (isset($va_request['setting_'.$vs_setting_key.'[]'])) {
 						$vs_val = $va_request['setting_'.$vs_setting_key.'[]'];
@@ -247,7 +261,7 @@ class ElementsController extends BaseEditorController {
 					}
 					
 					if (!($t_element->setSetting($vs_setting_key, $vs_val, $vs_error))) {
-						$this->notification->addNotification(_t("Setting is not valid: %1", $vs_error), __NOTIFICATION_TYPE_ERROR__);
+						$this->notification->addNotification(_t("Setting %2 is not valid: %1", $vs_error, $vs_setting_key), __NOTIFICATION_TYPE_ERROR__);
 						continue;
 					}
 					$t_element->update();
@@ -255,7 +269,7 @@ class ElementsController extends BaseEditorController {
 			}
 			
 			/* process type restrictions */
-			$t_restriction = new ca_metadata_type_restrictions();
+			$t_restriction = new ca_metadata_type_restrictions(null, true);
 			$va_settings = array_keys($t_restriction->getAvailableSettings());
 
 			foreach($_REQUEST as $vs_key => $vs_value) {
@@ -321,7 +335,7 @@ class ElementsController extends BaseEditorController {
  				$this->notification->addNotification(_t("Deleted metadata element"), __NOTIFICATION_TYPE_INFO__);
  			}
 
- 			$this->ListElements();
+ 			$this->Index();
  			return;
  		} else {
  			$this->render('elements_delete_html.php');
@@ -506,8 +520,15 @@ class ElementsController extends BaseEditorController {
 		$t_element = $this->getElementObject();
 		$pn_datatype = $this->request->getParameter('datatype', pInteger);
 		
-		$t_element->set('datatype', $pn_datatype);
-		$this->view->setVar('available_settings',$t_element->getAvailableSettings());
+		$t_element->set('datatype', $pn_datatype); 
+		
+		foreach($_REQUEST as $vs_k => $vs_v) {
+			if (substr($vs_k, 0, 8) == 'setting_') {
+				$t_element->setSetting(substr($vs_k, 8), $y=$this->request->getParameter($vs_k, pString));
+			}
+		}
+		
+		$this->view->setVar('available_settings',$t_element->getAvailableSettings($ps_service));
 		$this->render("ajax_elements_settings_form_html.php");
 	}
 	# -------------------------------------------------------

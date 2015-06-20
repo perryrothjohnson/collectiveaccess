@@ -79,6 +79,10 @@ class SearchResult extends BaseObject {
 		$this->opo_datamodel = Datamodel::load();
 		$this->opo_subject_instance = $this->opo_datamodel->getInstanceByTableName($this->ops_table_name, true);
 		
+		$this->ops_subject_pk = $this->opo_subject_instance->primaryKey();
+		$this->ops_subject_idno = $this->opo_subject_instance->getProperty('ID_NUMBERING_ID_FIELD');
+		$this->opb_use_identifiers_in_urls = (bool)$this->opo_subject_instance->getAppConfig()->get('use_identifiers_in_urls');
+		
 		$this->opa_prefetch_cache = array();
 		$this->opa_rel_prefetch_cache = array();
 		$this->opa_timestamp_cache = array();
@@ -112,6 +116,12 @@ class SearchResult extends BaseObject {
 		$this->opo_tep = $GLOBALS["_DbResult_time_expression_parser"];
 	}
 	# ------------------------------------------------------------------
+	public function cloneInit() {
+		$this->opo_db = new Db();
+		$this->opo_datamodel = Datamodel::load();
+		$this->opo_subject_instance = $this->opo_datamodel->getInstanceByTableName($this->ops_table_name, true);
+	}
+	# ------------------------------------------------------------------
 	public function init($po_engine_result, $pa_tables, $pa_options=null) {
 		
 		$this->opn_table_num = $this->opo_subject_instance->tableNum();
@@ -120,7 +130,6 @@ class SearchResult extends BaseObject {
 		$this->opa_cached_result_counts = array();
 		
 		$this->opo_engine_result = $po_engine_result;
-		if (!is_array($pa_tables)) { print caPrintStackTrace(); }
 		$this->opa_tables = $pa_tables;
 		
 		$this->errors = array();
@@ -132,6 +141,10 @@ class SearchResult extends BaseObject {
 	# ------------------------------------------------------------------
 	public function tableName() {
 		return $this->ops_table_name;
+	}
+	# ------------------------------------------------------------------
+	public function primaryKey() {
+		return $this->opo_datamodel->getTablePrimaryKeyName($this->opn_table_num);
 	}
 	# ------------------------------------------------------------------
 	public function numHits() {
@@ -192,7 +205,8 @@ class SearchResult extends BaseObject {
 	 * prefetch() will allow you to tell SearchResult to preload values for a set of hits starting at $pn_start 
 	 * Because this can be done in a single query it'll presumably be faster than lazy loading lots of rows
 	 */
-	public function prefetch($ps_tablename, $pn_start, $pn_num_rows, $pa_element_ids=null, $pa_options=null) {
+	public function prefetch($ps_tablename, $pn_start, $pn_num_rows, $pa_options=null) {
+		if (!$ps_tablename ) { return; }
 		//print "PREFETCH: ".$ps_tablename.' - '. $pn_start.' - '. $pn_num_rows."<br>";
 		
 		// get row_ids to fetch
@@ -202,6 +216,7 @@ class SearchResult extends BaseObject {
 		$va_joins = array();
 		
 		$t_rel_instance = $this->opo_datamodel->getInstanceByTableName($ps_tablename, true);
+		if (!$t_rel_instance) { return; }
 		
 		if ($ps_tablename != $this->ops_table_name) {
 			$va_fields = $this->opa_tables[$ps_tablename]['fieldList'];
@@ -226,19 +241,32 @@ class SearchResult extends BaseObject {
 			array_push($va_linking_tables, $ps_tablename);
 			
 			$vs_left_table = $this->ops_table_name;
-	
+
 			foreach($va_linking_tables as $vs_right_table) {
-				if ($va_rel = $this->opo_datamodel->getOneToManyRelations($vs_left_table, $vs_right_table)) {
-					$va_joins[] = 'INNER JOIN '.$va_rel['many_table'].' ON '.$va_rel['one_table'].'.'.$va_rel['one_table_field'].' = '.$va_rel['many_table'].'.'.$va_rel['many_table_field'];
+				$vs_join_eq = '';
+				if (($va_rels = $this->opo_datamodel->getOneToManyRelations($vs_left_table)) && is_array($va_rels[$vs_right_table])) {
+					$va_acc = array();
+					foreach($va_rels[$vs_right_table] as $va_rel) {
+						$va_acc[] =	$va_rel['one_table'].'.'.$va_rel['one_table_field'].' = '.$va_rel['many_table'].'.'.$va_rel['many_table_field'];
+					}
+					$vs_join_eq = join(" OR ", $va_acc);
+					$va_joins[] = 'INNER JOIN '.$vs_right_table.' ON '.$vs_join_eq; 
+					
 					$t_link = $this->opo_datamodel->getInstanceByTableName($va_rel['many_table'], true);
 					if (is_a($t_link, 'BaseRelationshipModel') && $t_link->hasField('type_id')) {
 						$va_fields[] = $va_rel['many_table'].'.type_id rel_type_id';
 					}
 				} else {
-					if ($va_rel = $this->opo_datamodel->getOneToManyRelations($vs_right_table, $vs_left_table)) {
-						$va_joins[] = 'INNER JOIN '.$va_rel['one_table'].' ON '.$va_rel['one_table'].'.'.$va_rel['one_table_field'].' = '.$va_rel['many_table'].'.'.$va_rel['many_table_field'];
+					if (($va_rels = $this->opo_datamodel->getOneToManyRelations($vs_right_table)) && is_array($va_rels[$vs_left_table])) {
+						$va_acc = array();
+						foreach($va_rels[$vs_left_table] as $va_rel) {
+							$va_acc[] = $va_rel['one_table'].'.'.$va_rel['one_table_field'].' = '.$va_rel['many_table'].'.'.$va_rel['many_table_field'];
+						}
+						$vs_join_eq = join(" OR ", $va_acc);
+						$va_joins[] = 'INNER JOIN '.$vs_right_table.' ON '.$vs_join_eq; 
 					}
 				}
+				
 				$vs_left_table = $vs_right_table;
 			}
 		} else {
@@ -265,14 +293,17 @@ class SearchResult extends BaseObject {
 			$vs_order_by = " ORDER BY ".$t_rel_instance->tableName().".idno_sort";
 		}
 	
+		$vs_deleted_sql = '';
 		$vs_rel_pk = $t_rel_instance->primaryKey();
-		
+		if ($t_rel_instance->hasField('deleted')) {
+			$vs_deleted_sql = " AND (".$t_rel_instance->tableName().".deleted = 0)";
+		}
 		$vs_sql = "
 			SELECT ".join(',', $va_fields)."
 			FROM ".$this->ops_table_name."
 			".join("\n", $va_joins)."
 			WHERE
-				".$this->ops_table_name.'.'.$this->ops_table_pk." IN (".join(',', $va_row_ids).") $vs_criteria_sql
+				".$this->ops_table_name.'.'.$this->ops_table_pk." IN (".join(',', $va_row_ids).") {$vs_criteria_sql} {$vs_deleted_sql}
 			{$vs_order_by}
 		";
 		//print "<pre>$vs_sql</pre>";
@@ -393,7 +424,8 @@ class SearchResult extends BaseObject {
  	 *				If $ps_field is set to refer to a URL metadata element and returnAsLink is set then the returned values will be HTML links using the URL value.
  	 *		returnAsLinkText = text to use a content of HTML link. If omitted the url itself is used as the link content.
  	 *		returnAsLinkAttributes = array of attributes to include in link <a> tag. Use this to set class, alt and any other link attributes.
- 	 * 
+ 	 * 		returnAsLinkTarget = Optional link target. If any plugin implementing hookGetAsLink() responds to the specified target then the plugin will be used to generate the links rather than CA's default link generator.
+ 	 *
  	 *		sort = optional array of bundles to sort returned values on. Currently only supported when getting related values via simple related <table_name> and <table_name>.related invokations. Eg. from a ca_objects results you can use the 'sort' option got get('ca_entities'), get('ca_entities.related') or get('ca_objects.related'). The bundle specifiers are fields with or without tablename. Only those fields returned for the related tables (intrinsics and label fields) are sortable. You cannot sort on attributes.
 	 *		where = optional array of fields and field values to filter returned values on. The fields must be intrinsic and in the same table as the field being "get()'ed" Can be used to filter returned values from primary and related tables. This option can be useful when you want to fetch certain values from a related table. For example, you want to get the relationship source_info values, but only for relationships going to a specific related record. Note that multiple fields/values are effectively AND'ed together - all must match for a row to be returned - and that only equivalence is supported (eg. field equals value).
 	 */
@@ -412,6 +444,7 @@ class SearchResult extends BaseObject {
 
 		$vb_return_as_link = 		(isset($pa_options['returnAsLink'])) ? (bool)$pa_options['returnAsLink'] : false;
 		$vs_return_as_link_text = 	(isset($pa_options['returnAsLinkText'])) ? (string)$pa_options['returnAsLinkText'] : '';
+		$vs_return_as_link_target = (isset($pa_options['returnAsLinkTarget'])) ? (string)$pa_options['returnAsLinkTarget'] : '';
 		$vs_return_as_link_attributes = (isset($pa_options['returnAsLinkAttributes']) && is_array($pa_options['returnAsLinkAttributes'])) ? $pa_options['returnAsLinkAttributes'] : array();
 			
 		$va_original_path_components = $va_path_components = $this->getFieldPathComponents($ps_field);
@@ -500,7 +533,7 @@ class SearchResult extends BaseObject {
 		}
 		
 		if (!($t_instance = $this->opo_datamodel->getInstanceByTableName($va_path_components['table_name'], true))) { return null; }	// Bad table
-		
+		$t_original_instance = $t_instance;	// $t_original_instance will always be the as-called subject; optimizations may results in $t_instance being transformed into a different model
 //
 // Simple related table get: 
 //			<table>
@@ -539,7 +572,10 @@ class SearchResult extends BaseObject {
 				$va_related_items = caSortArrayByKeyInValue($va_related_items, $va_sort_fields);
 			}
 	
-// Return as array		
+// Return as array	
+			if($vs_template) {
+				return caProcessTemplateForIDs($vs_template, $this->opo_subject_instance->tableName(), array($vn_row_id), array_merge($pa_options, array('placeholderPrefix' => $va_path_components['field_name'])));
+			}	
 			if($vb_return_as_array || $vb_return_all_locales) {
 				 if ($vb_return_all_locales) {
 					$va_related_tmp = array();
@@ -558,7 +594,7 @@ class SearchResult extends BaseObject {
 							$va_template_opts = array();
 							$va_template_opts['relationshipValues'][$va_relation_info[$vs_pk]][$va_relation_info['relation_id']]['relationship_typename'] = $va_relation_info['relationship_typename'];
 							$vs_text = $vs_template ? caProcessTemplateForIDs($vs_template, $t_instance->tableName(), array($va_relation_info[$vs_pk]), $va_template_opts) : join("; ", $va_relation_info['labels']);
-							$va_link = caCreateLinksFromText(array($vs_text), $va_original_path_components['table_name'], array($va_relation_info[$vs_pk]), $vs_return_as_link_class);
+							$va_link = caCreateLinksFromText(array($vs_text), $va_original_path_components['table_name'], array($va_relation_info[$vs_pk]), $vs_return_as_link_class, $vs_return_as_link_target);
 							$va_links[$vn_relation_id] = array_pop($va_link);
 						} else {
 							$va_related_items[$vn_relation_id]['labels'] = $va_relation_info['labels'];
@@ -583,6 +619,8 @@ class SearchResult extends BaseObject {
 					$va_relationship_values[$va_relation_info[$vs_rel_pk]][$vn_relation_id] = array(
 						'relationship_typename' => $va_relation_info['relationship_typename'],
 						'relationship_type_id' => $va_relation_info['relationship_type_id'],
+						'relationship_type_code' => $va_relation_info['relationship_type_code'],
+						'relationship_typecode' => $va_relation_info['relationship_type_code'],
 						'label' => $va_relation_info['label']
 					);
 				}
@@ -598,7 +636,7 @@ class SearchResult extends BaseObject {
 				$va_text = caProcessTemplateForIDs($vs_template, $t_instance->tableNum(), $va_row_ids, array_merge($va_template_opts, array('relationshipValues' => $va_relationship_values, 'showHierarchicalLabels' => $vb_show_hierarachy)));
 							
 				if ($vb_return_as_link) {
-					$va_links = caCreateLinksFromText($va_text, $va_original_path_components['table_name'], $va_row_ids, $vs_return_as_link_class);
+					$va_links = caCreateLinksFromText($va_text, $va_original_path_components['table_name'], $va_row_ids, $vs_return_as_link_class, $vs_return_as_link_target);
 					
 					return join($vs_delimiter, $va_links);
 				} 
@@ -615,7 +653,7 @@ class SearchResult extends BaseObject {
 //
 		$vb_is_get_for_labels = $vb_return_all_label_values = $vb_get_preferred_labels_only = $vb_get_nonpreferred_labels_only = false;
 		if(in_array($va_path_components['field_name'], array('preferred_labels', 'nonpreferred_labels'))) {
-			if (is_subclass_of($t_instance, 'LabelableBaseModelWithAttributes')) {
+			if ($t_instance->getProperty('LABEL_TABLE_NAME')) {
 				
 				$vb_get_preferred_labels_only = ($va_path_components['field_name'] == 'preferred_labels') ? true : false;
 				$vb_get_nonpreferred_labels_only = ($va_path_components['field_name'] == 'nonpreferred_labels') ? true : false;
@@ -661,7 +699,6 @@ class SearchResult extends BaseObject {
 				case 'children':
 					if ($t_instance->isHierarchical()) {
 						//unset($va_path_components['components'][1]);	// remove 'children' from field path
-						
 						$vs_field_spec = join('.', array_values($va_path_components['components']));
 						if ($vn_id = $this->get($va_path_components['table_name'].'.'.$t_instance->primaryKey(), array('returnAsArray' => false))) {
 							if($t_instance->load($vn_id)) {
@@ -715,7 +752,7 @@ class SearchResult extends BaseObject {
 					
 					if ($vb_return_as_link) {
 						if (!$vb_return_all_locales) {
-							$va_vals = caCreateLinksFromText($va_vals, $va_original_path_components['table_name'], $va_ids, $vs_return_as_link_class);
+							$va_vals = caCreateLinksFromText($va_vals, $va_original_path_components['table_name'], $va_ids, $vs_return_as_link_class, $vs_return_as_link_target);
 						}
 					}
 	
@@ -729,14 +766,20 @@ class SearchResult extends BaseObject {
 					if ($t_instance->isHierarchical()) {
 						$vs_field_spec = join('.', array_values($va_path_components['components']));
 						$vs_hier_pk_fld = $t_instance->primaryKey();
-						if ($va_ids = $this->get($va_path_components['table_name'].'.'.$vs_hier_pk_fld, array_merge($pa_options, array('returnAsArray' => true)))) {
-							if ($va_path_components['field_name'] == $vs_hier_pk_fld) {
-								$va_vals = $va_ids;
-							} else {
-								$va_vals = array();
+						if ($va_ids = $this->get($va_path_components['table_name'].'.'.$vs_hier_pk_fld, array_merge($pa_options, array('returnAsArray' => true, 'returnAsLink'=> false, 'returnAllLocales' => false)))) {
+							$va_vals = array();
+							if ($va_path_components['subfield_name'] == $vs_hier_pk_fld) {
 								foreach($va_ids as $vn_id) {
+									// TODO: This is too slow
 									if($t_instance->load($vn_id)) {
-										$va_vals[] = $t_instance->get($vs_field_spec.".preferred_labels", $pa_options);
+										$va_vals = array_merge($va_vals, $t_instance->get($va_path_components['table_name'].".hierarchy.".$vs_hier_pk_fld, $pa_options));
+									}
+								}
+							} else {
+								foreach($va_ids as $vn_id) {
+									// TODO: This is too slow
+									if($t_instance->load($vn_id)) {
+										$va_vals = $t_instance->get($vs_field_spec.".preferred_labels", $pa_options);
 									}
 								}
 							}
@@ -823,7 +866,7 @@ class SearchResult extends BaseObject {
 					$va_values_tmp = array();
 					foreach($va_values as $vn_i => $va_value_list) {
 						foreach($va_value_list as $vn_attr_id => $va_attr_data) {
-							$va_values_tmp[] = caProcessTemplateForIDs($vs_template, $va_path_components['table_name'], array($vn_row_id), array('placeholderPrefix' => $va_path_components['field_name']));
+							$va_values_tmp[] = caProcessTemplateForIDs($vs_template, $va_path_components['table_name'], array($vn_row_id), array_merge($pa_options, array('placeholderPrefix' => $va_path_components['field_name'])));
 						}
 					}
 					
@@ -858,14 +901,13 @@ class SearchResult extends BaseObject {
 		} else {
 			// Prefetch intrinsic fields in primary and related tables
 			if (!isset($this->opa_prefetch_cache[$va_path_components['table_name']][$vn_row_id])) {
-				$this->prefetch($va_path_components['table_name'], $this->opo_engine_result->currentRow(), $this->getOption('prefetch'), null, $pa_options);	// try to prefetch ahead (usually doesn't hurt and very often helps performance)
+				$this->prefetch($va_path_components['table_name'], $this->opo_engine_result->currentRow(), $this->getOption('prefetch'), $pa_options);	// try to prefetch ahead (usually doesn't hurt and very often helps performance)
 			}
 		}
 		
 		
 		$va_return_values = array();
 		if (($va_path_components['table_name'] !== $this->ops_table_name) && ($va_path_components['field_name'] !== 'relationship_typename') && !$t_instance->hasField($va_path_components['field_name']) && method_exists($t_instance, 'getAttributes')) {
-			
 //
 // Return metadata attributes in a related table
 //
@@ -907,20 +949,23 @@ class SearchResult extends BaseObject {
 					}
 				}
 			}
-
+			 
 			if ($vb_return_as_array || $vb_return_all_locales) {
 // return array
 				if ($vb_return_as_link && $vb_is_related) {
 					$vs_table_name = $t_instance->tableName();
-					$vs_fld_key = ($va_path_components['subfield_name']) ? $va_path_components['field_name'] : $va_path_components['field_name'];
+					$vs_fld_key = ($va_path_components['subfield_name']) ? $va_path_components['subfield_name'] : $va_path_components['field_name'];
 					if (!$vb_return_all_locales) {
 						$va_return_values_tmp = array();
 						foreach($va_return_values as $vn_i => $va_value) {
-							$vs_value = $va_value[$vs_fld_key];
-							$vs_value = caProcessTemplateForIDs($vs_template, $va_path_components['table_name'], array($va_ids[$vn_i][$vs_pk]), array('returnAsArray' => false));
+							if ($vs_template) {
+								$vs_value = caProcessTemplateForIDs($vs_template, $va_path_components['table_name'], array($va_ids[$vn_i][$vs_pk]), array('returnAsArray' => false));
+							} else {
+								$vs_value = $va_value[$vs_fld_key];
+							}
 							
 							if ($vb_return_as_link) {
-								$va_return_values_tmp[$vn_i] = array_pop(caCreateLinksFromText(array($vs_value), $va_original_path_components['table_name'], array($va_ids[$vn_i]), $vs_return_as_link_class));
+								$va_return_values_tmp[$vn_i] = array_pop(caCreateLinksFromText(array($vs_value), $va_original_path_components['table_name'], array($va_ids[$vn_i]), $vs_return_as_link_class, $vs_return_as_link_target));
 							} else {
 								$va_return_values_tmp[$vn_i] = $vs_value;
 							}
@@ -932,7 +977,7 @@ class SearchResult extends BaseObject {
 			} else {
 // return scalar
 				if ($vb_return_as_link && $vb_is_related) {
-					$va_return_values = caCreateLinksFromText($va_return_values, $va_original_path_components['table_name'], $va_ids, $vs_return_as_link_class);
+					$va_return_values = caCreateLinksFromText($va_return_values, $va_original_path_components['table_name'], $va_ids, $vs_return_as_link_class, $vs_return_as_link_target);
 				}
 				if (isset($pa_options['convertLineBreaks']) && $pa_options['convertLineBreaks']) {
 					return caConvertLineBreaks(join($vs_delimiter, $va_return_values));
@@ -942,6 +987,9 @@ class SearchResult extends BaseObject {
 			}
 		} else {
 
+			if ($vs_template) {
+				return caProcessTemplateForIDs($vs_template, $this->opo_subject_instance->tableName(), array($vn_row_id), array_merge($pa_options, array('placeholderPrefix' => $va_path_components['field_name'])));
+			}	
 //
 // Return fields (intrinsics, labels) in primary or related table
 //
@@ -987,7 +1035,7 @@ class SearchResult extends BaseObject {
 						foreach($va_value_list as $vn_id => $va_by_locale) {
 							foreach($va_by_locale as $vn_locale_id => $va_values) {
 								foreach($va_values as $vn_i => $va_value) {
-									if (in_array($va_value['rel_type_id'], $va_rel_types)) {
+									if (!$va_value['rel_type_id'] || in_array($va_value['rel_type_id'], $va_rel_types)) {
 										$va_tmp[$vn_id][$vn_locale_id][$vn_i] = $va_value;
 									}
 								}
@@ -1052,7 +1100,7 @@ class SearchResult extends BaseObject {
 				foreach($va_value_list as $vn_id => $va_by_locale) {
 					foreach($va_by_locale as $vn_locale_id => $va_values) {
 						foreach($va_values as $vn_i => $va_value) {
-							if (in_array($va_value[$vs_type_fld ? $vs_type_fld : 'item_type_id'], $va_type_ids)) {
+							if (!$va_value[$vs_type_fld ? $vs_type_fld : 'item_type_id'] || in_array($va_value[$vs_type_fld ? $vs_type_fld : 'item_type_id'], $va_type_ids)) {
 								$va_tmp[$vn_id][$vn_locale_id][$vn_i] = $va_value;
 							}
 						}
@@ -1095,48 +1143,133 @@ class SearchResult extends BaseObject {
 	
 			if ($vb_return_as_array) {
 // return array (intrinsics or labels in primary or related table)
-				if ($t_instance->hasField($va_path_components['field_name']) && ($va_path_components['table_name'] === $this->ops_table_name)) {
+				if ($t_instance->hasField($va_path_components['field_name']) && ($va_path_components['table_name'] === $t_instance->tableName())) {
 					// Intrinsic
 					$va_field_info = $t_instance->getFieldInfo($va_path_components['field_name']);
-					
+					$vs_pk = $t_original_instance->primaryKey();
 					// Handle specific intrinsic types
 					switch($va_field_info['FIELD_TYPE']) {
 						case FT_DATERANGE:
 						case FT_HISTORIC_DATERANGE:
-							$this->opo_tep->init();
-							if ($va_field_info['FIELD_TYPE'] == FT_DATERANGE) {
-								$this->opo_tep->setUnixTimestamps($va_value[$va_field_info['START']], $va_value[$va_field_info['END']]);
-							} else {
-								$this->opo_tep->setHistoricTimestamps($va_value[$va_field_info['START']], $va_value[$va_field_info['END']]);
-							}
-							$vs_prop = $this->opo_tep->getText();
-							if ($vb_return_all_locales) {
-								$va_return_values[$vn_row_id][$vn_locale_id][] = $vs_prop;
-							} else {
-								$va_return_values[] = $vs_prop;
-							}
-							break;
-						default:
-							// is intrinsic field in primary table
 							foreach($va_value_list as $vn_id => $va_values_by_locale) {
 								foreach($va_values_by_locale as $vn_locale_id => $va_values) {
 									foreach($va_values as $vn_i => $va_value) {
-										if (($vb_get_preferred_labels_only) && (!$va_value['is_preferred'])) { continue; }
-										if (($vb_get_nonpreferred_labels_only) && ($va_value['is_preferred'])) { continue; }
+										$va_ids[] = $va_value[$vs_pk];
+					
+										if ((isset($pa_options['sortable']) && $pa_options['sortable'])) {
+											$vs_prop = $va_value[$va_field_info['START']].'/'.$va_value[$va_field_info['END']];
+										} else {
+											$this->opo_tep->init();
+											if ($va_field_info['FIELD_TYPE'] == FT_DATERANGE) {
+												$this->opo_tep->setUnixTimestamps($va_value[$va_field_info['START']], $va_value[$va_field_info['END']]);
+											} else {
+												$this->opo_tep->setHistoricTimestamps($va_value[$va_field_info['START']], $va_value[$va_field_info['END']]);
+											}
+											$vs_prop = $this->opo_tep->getText($pa_options);
+										}
 										
 										if ($vb_return_all_locales) {
-											$va_return_values[$vn_row_id][$vn_locale_id][] = $va_value[$va_path_components['field_name']];
+											$va_return_values[$vn_row_id][$vn_locale_id][] = $vs_prop;
 										} else {
-											$va_return_values[] = $va_value[$va_path_components['field_name']];
+											$va_return_values[] = $vs_prop;
+										}
+									}
+								}
+							}
+						case FT_MEDIA:
+							if(!$vs_version = $va_path_components['subfield_name']) {
+								$vs_version = "largeicon";
+							}
+							foreach($va_value_list as $vn_id => $va_values_by_locale) {
+								foreach($va_values_by_locale as $vn_locale_id => $va_values) {
+									foreach($va_values as $vn_i => $va_value) {
+										$va_ids[] = $va_value[$vs_pk];
+					
+										if (isset($pa_options['unserialize']) && $pa_options['unserialize']) {
+											$vs_prop = caUnserializeForDatabase($va_value[$va_path_components['field_name']]);
+											if ($vb_return_all_locales) {
+												$va_return_values[$vn_row_id][$vn_locale_id][] = $vs_prop;
+											} else {
+												$va_return_values[] = $vs_prop;
+											}
+										} else {
+											$o_media_settings = new MediaProcessingSettings($va_path_components['table_name'], $va_path_components['field_name']);
+											$va_versions = $o_media_settings->getMediaTypeVersions('*');
+							
+											if (!isset($va_versions[$vs_version])) {
+												$va_tmp = array_keys($va_versions);
+												$vs_version = array_shift($va_tmp);
+											}
+								
+											if ($vb_return_all_locales) {
+												if (isset($pa_options['returnURL']) && ($pa_options['returnURL'])) {
+													$va_return_values[$vn_row_id][$vn_locale_id][] = $this->getMediaUrl($va_path_components['table_name'].'.'.$va_path_components['field_name'], $vs_version, $pa_options);
+												} else {
+													$va_return_values[$vn_row_id][$vn_locale_id][] = $this->getMediaTag($va_path_components['table_name'].'.'.$va_path_components['field_name'], $vs_version, $pa_options);
+												}
+											} else {
+												if (isset($pa_options['returnURL']) && ($pa_options['returnURL'])) {
+													$va_return_values[] = $this->getMediaUrl($va_path_components['table_name'].'.'.$va_path_components['field_name'], $vs_version, $pa_options);
+												} else {
+													$va_return_values[] = $this->getMediaTag($va_path_components['table_name'].'.'.$va_path_components['field_name'], $vs_version, $pa_options);
+												}
+											}
 										}
 									}
 								}
 							}
 							break;
+						default:
+							// is intrinsic field in primary table
+							$vb_supports_preferred = (bool)$t_instance->hasField('is_preferred');
+							foreach($va_value_list as $vn_id => $va_values_by_locale) {
+								foreach($va_values_by_locale as $vn_locale_id => $va_values) {
+									foreach($va_values as $vn_i => $va_value) {
+										$va_ids[] = $vn_id = $va_value[$vs_pk];
+					
+										if (($vb_get_preferred_labels_only) && ($vb_supports_preferred) && (!$va_value['is_preferred'])) { continue; }
+										if (($vb_get_nonpreferred_labels_only) && ($vb_supports_preferred) && ($va_value['is_preferred'])) { continue; }
+										
+										$vs_prop = $va_value[$va_path_components['field_name']];
+										if (isset($pa_options['convertCodesToDisplayText']) && $pa_options['convertCodesToDisplayText'] && ($vs_list_code = $t_instance->getFieldInfo($va_path_components['field_name'],"LIST_CODE"))) {
+											$vs_prop = $t_list->getItemFromListForDisplayByItemID($vs_list_code, $vs_prop);
+										} else {
+											if (isset($pa_options['convertCodesToDisplayText']) && $pa_options['convertCodesToDisplayText'] && ($vs_list_code = $t_instance->getFieldInfo($va_path_components['field_name'],"LIST"))) {
+												$vs_prop = $t_list->getItemFromListForDisplayByItemValue($vs_list_code, $vs_prop);
+											} else {
+												if (isset($pa_options['convertCodesToDisplayText']) && $pa_options['convertCodesToDisplayText'] && ($va_path_components['field_name'] === 'locale_id') && ((int)$vs_prop > 0)) {
+													$t_locale = new ca_locales($vs_prop);
+													$vs_prop = $t_locale->getName();
+												} else {
+													if (isset($pa_options['convertCodesToDisplayText']) && $pa_options['convertCodesToDisplayText'] && (is_array($va_list = $t_instance->getFieldInfo($va_path_components['field_name'],"BOUNDS_CHOICE_LIST")))) {
+														foreach($va_list as $vs_option => $vs_value) {
+															if ($vs_value == $vs_prop) {
+																$vs_prop = $vs_option;
+																break;
+															}
+														}
+													}
+												}
+											}
+										}
+										
+										if ($vb_return_all_locales) {
+											$va_return_values[$vn_id][$vn_locale_id][] = $vs_prop;
+										} else {
+											$va_return_values[$vn_id][$vn_locale_id] = $vs_prop;
+										}
+									}
+								}
+							}
+							
+							if (!$vb_return_all_locales) {
+								$va_return_values = array_values(caExtractValuesByUserLocale($va_return_values));
+							}
+							break;
 					}
 				} else {
 					// Attributes
-					$vs_pk = $t_instance->primaryKey();
+					$vs_pk = $t_original_instance->primaryKey();
 					$vb_is_related = ($this->ops_table_name !== $va_path_components['table_name']);
 					$va_ids = array();
 					
@@ -1200,9 +1333,9 @@ class SearchResult extends BaseObject {
 						}
 					}
 				}
-				if ($vb_return_as_link && $vb_is_related) {
+				if ($vb_return_as_link) {
 					if (!$vb_return_all_locales) {
-						$va_return_values = caCreateLinksFromText($va_return_values, $va_original_path_components['table_name'], $va_ids, $vs_return_as_link_class);
+						$va_return_values = caCreateLinksFromText($va_return_values, $va_original_path_components['table_name'], $va_ids, $vs_return_as_link_class, $vs_return_as_link_target);
 					}
 				}
 				
@@ -1250,14 +1383,22 @@ class SearchResult extends BaseObject {
 								}
 								break;
 							case FT_DATERANGE:
-								$this->opo_tep->init();
-								$this->opo_tep->setUnixTimestamps($va_value[$va_field_info['START']], $va_value[$va_field_info['END']]);
-								$va_value[$va_path_components['field_name']] = $this->opo_tep->getText();
+								if ((isset($pa_options['sortable']) && $pa_options['sortable'])) {
+									$va_value[$va_path_components['field_name']] = $va_value[$va_field_info['START']].'/'.$va_value[$va_field_info['END']];
+								} else {
+									$this->opo_tep->init();
+									$this->opo_tep->setUnixTimestamps($va_value[$va_field_info['START']], $va_value[$va_field_info['END']]);
+									$va_value[$va_path_components['field_name']] = $this->opo_tep->getText($pa_options);
+								}
 								break;
 							case FT_HISTORIC_DATERANGE:
-								$this->opo_tep->init();
-								$this->opo_tep->setHistoricTimestamps($va_value[$va_field_info['START']], $va_value[$va_field_info['END']]);
-								$va_value[$va_path_components['field_name']] = $this->opo_tep->getText();
+								if ((isset($pa_options['sortable']) && $pa_options['sortable'])) {
+									$va_value[$va_path_components['field_name']] = $va_value[$va_field_info['START']].'/'.$va_value[$va_field_info['END']];
+								} else {
+									$this->opo_tep->init();
+									$this->opo_tep->setHistoricTimestamps($va_value[$va_field_info['START']], $va_value[$va_field_info['END']]);
+									$va_value[$va_path_components['field_name']] = $this->opo_tep->getText($pa_options);
+								}
 								break;
 							case FT_MEDIA:
 								if(!$vs_version = $va_path_components['subfield_name']) {
@@ -1332,7 +1473,7 @@ class SearchResult extends BaseObject {
 				}
 				
 				if ($vb_return_as_link && $vb_is_related) {
-					$va_return_values = caCreateLinksFromText($va_return_values, $va_original_path_components['table_name'], $va_ids, $vs_return_as_link_class);
+					$va_return_values = caCreateLinksFromText($va_return_values, $va_original_path_components['table_name'], $va_ids, $vs_return_as_link_class, $vs_return_as_link_target);
 				}
 				
 				if (isset($pa_options['convertLineBreaks']) && $pa_options['convertLineBreaks']) {
@@ -1344,6 +1485,26 @@ class SearchResult extends BaseObject {
 		}
 
 		return null;
+	}
+	# ------------------------------------------------------------------
+	/**
+	 *
+	 */
+	public function getWithTemplate($ps_template, $pa_options=null) {	
+		return caProcessTemplateForIDs($ps_template, $this->ops_table_name, array($this->get($this->ops_table_name.".".$this->ops_subject_pk)), $pa_options);
+	}
+	# ------------------------------------------------------------------
+	/**
+	 *
+	 */
+	public function getWithTemplateForResults($ps_template, $pa_options=null) {	
+		$pn_start = caGetOption('start', $pa_options, 0);
+		$pn_end = caGetOption('end', $pa_options, $this->numHits());
+		
+		$this->seek($pn_start);
+		$vn_c = 0;
+		
+		return caProcessTemplateForIDs($ps_template, $this->ops_table_name, array($this->get($this->ops_table_name.".".$this->ops_subject_pk)), $pa_options);
 	}
 	# ------------------------------------------------------------------
 	/**
@@ -1850,6 +2011,17 @@ class SearchResult extends BaseObject {
 			}
 		}
 		return $this->opa_cached_result_counts[$vs_key] = $va_result;
+	}
+	# ------------------------------------------------------------------
+	/**
+	 *
+	 */
+	public function getIdentifierForUrl() {
+		if ($this->opb_use_identifiers_in_urls && $this->ops_subject_idno) {
+			return $this->get($this->ops_subject_idno);
+		} else {
+			return $this->get($this->ops_subject_pk);
+		}
 	}
 	# ------------------------------------------------------------------
 }

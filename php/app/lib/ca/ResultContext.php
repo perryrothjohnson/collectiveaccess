@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------
  *
  * Software by Whirl-i-Gig (http://www.whirl-i-gig.com)
- * Copyright 2010-2012 Whirl-i-Gig
+ * Copyright 2010-2014 Whirl-i-Gig
  *
  * For more information visit http://www.CollectiveAccess.org
  *
@@ -41,6 +41,7 @@
 		private $ops_find_type;
 		private $opa_context = null;
 		private $opb_is_new_search = false;
+		private $opb_search_expression_has_changed = null;
 		# ------------------------------------------------------------------
 		/**
 		 * To create a result context you pass the table and type of the current find; the ResultContext will be loaded
@@ -61,6 +62,15 @@
 			$this->getContext();
 		}
 		# ------------------------------------------------------------------
+		/**
+		 * Returns table name of result context (eg. what kind of item is the find result composed of?)
+		 *
+		 * @return string
+		 */
+		public function tableName() {
+			return $this->ops_table_name;
+		}
+		# ------------------------------------------------------------------
 		# Context getter/setters
 		# ------------------------------------------------------------------
 		/**
@@ -73,17 +83,40 @@
 		public function getSearchExpression($pb_from_context_only=false) {
 			if(!$pb_from_context_only && ($ps_search = urldecode($this->opo_request->getParameter('search', pString))) != ''){
 				// search specified by request parameter
-				$this->setContextValue('expression', $ps_search);
-				$this->opb_is_new_search = true;
+				if ($ps_search != $this->getContextValue('expression')) {
+					$this->setContextValue('expression', $ps_search);
+					$this->opb_is_new_search = true;
+					$this->opb_search_expression_has_changed = true;
+				} else {
+					if (is_null($this->opb_search_expression_has_changed)) { $this->opb_search_expression_has_changed = false; }
+				}
 				return $ps_search;
 			} else {
 				// get search expression from context
 				if ($va_context = $this->getContext()) {
+					$this->opb_search_expression_has_changed = false;
 					return $va_context['expression'];
 				}
 			}
-			
 			return null;
+		}
+		# ------------------------------------------------------------------
+		/**
+		 * Determines if the search expression is changing during this request
+		 *
+		 * @param $pb_from_context_only boolean Optional; if true then search expression is returned from context only and any search expression request parameter is ignored. Default is false.
+		 * @return bool True if expression is changing
+		 */
+		public function searchExpressionHasChanged($pb_from_context_only=false) {
+			if (!is_null($this->opb_search_expression_has_changed)) { return $this->opb_search_expression_has_changed; }
+			 
+			if(!$pb_from_context_only && ($ps_search = urldecode($this->opo_request->getParameter('search', pString))) != ''){
+				// search specified by request parameter
+				if ($ps_search != $this->getContextValue('expression')) {
+					return $this->opb_search_expression_has_changed = true;
+				}
+			}
+			return $this->opb_search_expression_has_changed = false;
 		}
 		# ------------------------------------------------------------------
 		/**
@@ -610,6 +643,16 @@
 		}
 		# ------------------------------------------------------------------
 		/**
+		 * Gets value in the context named $ps_key. This method is used 
+		 * to fetch context data. It is not meant to be invoked by outside callers.
+		 *
+		 * @param $ps_key - string identifier for context value
+		 */
+		protected function getContextValue($ps_key) {
+			return $this->opa_context[$ps_key];
+		}
+		# ------------------------------------------------------------------
+		/**
 		 * Saves all changes to current context to persistent storage
 		 *
 		 * @param string Optional find type string to save context under; allows you to save to any context regardless of what is currently loaded. Don't use this unless you know what you're doing.
@@ -625,12 +668,10 @@
 			
 			$va_semi_context = array(
 				'history' => $va_context['history'],
-				'page' => $va_context['page'],
-				'result_list' => $va_context['result_list']
+				'page' => $va_context['page']
 			);
 			unset($va_context['history']);
 			unset($va_context['page']);
-			unset($va_context['result_list']);
 			
 			$o_storage = $this->getPersistentStorageInstance();
 			$o_storage->setVar('result_context_'.$this->ops_table_name.'_'.$vs_find_type, $va_context);

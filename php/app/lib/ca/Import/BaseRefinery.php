@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------
  *
  * Software by Whirl-i-Gig (http://www.whirl-i-gig.com)
- * Copyright 2013 Whirl-i-Gig
+ * Copyright 2013-2014 Whirl-i-Gig
  *
  * For more information visit http://www.CollectiveAccess.org
  *
@@ -57,6 +57,11 @@
 		 *
 		 */
 		protected $ops_description = null;
+		
+		/**
+		 *
+		 */
+		protected $opb_returns_multiple_values;
 		# -------------------------------------------------------
 		public function __construct() {
 		
@@ -94,29 +99,49 @@
 		/**
 		 *
 		 */
-		public static function parsePlaceholder($ps_placeholder, $pa_source_data, $pa_item, $ps_delimiter=null, $pn_index=0) {
+		public static function parsePlaceholder($ps_placeholder, $pa_source_data, $pa_item, $ps_delimiter=null, $pn_index=0, $pa_options=null) {
 			$ps_placeholder = trim($ps_placeholder);
 			if ($ps_placeholder[0] == '^') {
-				$vs_val = $pa_source_data[substr($ps_placeholder, 1)];
+				if (!isset($pa_source_data[substr($ps_placeholder, 1)])) { return null; }
+				$vm_val = $pa_source_data[substr($ps_placeholder, 1)];
 			} else {
-				$vs_val = $ps_placeholder;
+				$vm_val = $ps_placeholder;
+			}
+			
+			if (is_array($vm_val) && !is_null($pn_index)) {
+				$vm_val = isset($vm_val[$pn_index]) ? $vm_val[$pn_index] : null;
+			}
+			
+			if(is_array($vm_val)) {
+				foreach($vm_val as $vn_i => $vs_val) {
+					if (is_array($pa_item['settings']['original_values']) && (($vn_ix = array_search(mb_strtolower($vs_val), $pa_item['settings']['original_values'])) !== false)) {
+						$vs_val = $pa_item['settings']['replacement_values'][$vn_ix];
+					}
+					$vm_val[$vn_i] = trim($vs_val);
+				}
+				
+				if (caGetOption("returnAsString", $pa_options, false)) {
+					$vs_delimiter = caGetOption("delimiter", $pa_options, '');
+					return join($vs_delimiter, $vm_val);
+				}
+				return $vm_val;
 			}
 			
 			if ($ps_delimiter) {
-				$va_val = explode($ps_delimiter, $vs_val);
+				$va_val = explode($ps_delimiter, $vm_val);
 				if ($pn_index < sizeof($va_val)) {
-					if (!($vs_val = $va_val[$pn_index])) { $vs_val = ''; }
+					if (!($vm_val = $va_val[$pn_index])) { $vm_val = ''; }
 				} else {
-					$vs_val = array_shift($va_val);
+					$vm_val = array_shift($va_val);
 				}
 			}
-			$vs_val = trim($vs_val);
+			$vm_val = trim($vm_val);
 			
-			if (is_array($pa_item['settings']['original_values']) && (($vn_i = array_search(mb_strtolower($vs_val), $pa_item['settings']['original_values'])) !== false)) {
-				$vs_val = $pa_item['settings']['replacement_values'][$vn_i];
+			if (is_array($pa_item['settings']['original_values']) && (($vn_i = array_search(mb_strtolower($vm_val), $pa_item['settings']['original_values'])) !== false)) {
+				$vm_val = $pa_item['settings']['replacement_values'][$vn_i];
 			}
 			
-			return trim($vs_val);
+			return trim($vm_val);
 		}
 		# -------------------------------------------------------
 		/**
@@ -131,6 +156,26 @@
 		 * @return array The value(s) to add 
 		 */
 		abstract function refine(&$pa_destination_data, $pa_group, $pa_item, $pa_source_data, $pa_options=null);
+		# -------------------------------------------------------	
+		/**
+		 * Identifies return value of refinery. If the refinery is designed to return a set of values overwriting all group values this method will return true. If
+		 * the refinery returns a single transformed value intended to be inserted in place of the source value (Eg. a simple single-item mapping) this method
+		 * will return false.
+		 *
+		 * @return bool True if refinery returns multiple values, false if it returns a single value
+		 */
+		abstract function returnsMultipleValues();
+		# -------------------------------------------------------	
+		/**
+		 * 
+		 *
+		 * @return bool Always returns true
+		 */
+		public function setReturnsMultipleValues($pb_returns_multiple_values) {
+			$this->opb_returns_multiple_values = (bool)$pb_returns_multiple_values;
+			
+			return true;
+		}
 		# -------------------------------------------------------	
 	}
 ?>

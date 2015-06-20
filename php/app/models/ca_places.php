@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------
  *
  * Software by Whirl-i-Gig (http://www.whirl-i-gig.com)
- * Copyright 2008-2012 Whirl-i-Gig
+ * Copyright 2008-2013 Whirl-i-Gig
  *
  * For more information visit http://www.CollectiveAccess.org
  *
@@ -35,7 +35,7 @@
    */
 
 require_once(__CA_LIB_DIR__."/ca/IBundleProvider.php");
-require_once(__CA_LIB_DIR__."/ca/BundlableLabelableBaseModelWithAttributes.php");
+require_once(__CA_LIB_DIR__."/ca/RepresentableBaseModel.php");
 require_once(__CA_LIB_DIR__.'/ca/IHierarchy.php');
 require_once(__CA_MODELS_DIR__."/ca_lists.php");
 
@@ -184,10 +184,10 @@ BaseModel::$s_ca_models_definitions['ca_places'] = array(
  	)
 );
 
-class ca_places extends BundlableLabelableBaseModelWithAttributes implements IBundleProvider, IHierarchy {
-	# ---------------------------------
+class ca_places extends RepresentableBaseModel implements IBundleProvider, IHierarchy {
+	# ------------------------------------------------------
 	# --- Object attribute properties
-	# ---------------------------------
+	# ------------------------------------------------------
 	# Describe structure of content object's properties - eg. database fields and their
 	# associated types, what modes are supported, et al.
 	#
@@ -319,8 +319,9 @@ class ca_places extends BundlableLabelableBaseModelWithAttributes implements IBu
 		parent::__construct($pn_id);	# call superclass constructor
 	}
 	# ------------------------------------------------------
-	protected function initLabelDefinitions() {
-		parent::initLabelDefinitions();
+	protected function initLabelDefinitions($pa_options=null) {
+		parent::initLabelDefinitions($pa_options);
+		$this->BUNDLES['ca_object_representations'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Media representations'));
 		$this->BUNDLES['ca_entities'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related entities'));
 		$this->BUNDLES['ca_objects'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related objects'));
 		$this->BUNDLES['ca_object_lots'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related lots'));
@@ -328,9 +329,10 @@ class ca_places extends BundlableLabelableBaseModelWithAttributes implements IBu
 		$this->BUNDLES['ca_collections'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related collections'));
 		$this->BUNDLES['ca_occurrences'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related occurrences'));
 		$this->BUNDLES['ca_storage_locations'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related storage locations'));
-		
 		$this->BUNDLES['ca_loans'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related loans'));
 		$this->BUNDLES['ca_movements'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related movements'));
+		
+		$this->BUNDLES['ca_tour_stops'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related tour stops'));
 		
 		$this->BUNDLES['ca_list_items'] = array('type' => 'related_table', 'repeating' => true, 'label' => _t('Related vocabulary terms'));
 		$this->BUNDLES['ca_sets'] = array('type' => 'special', 'repeating' => true, 'label' => _t('Sets'));
@@ -462,7 +464,7 @@ class ca_places extends BundlableLabelableBaseModelWithAttributes implements IBu
 	 * Returns name of hierarchy for currently loaded place or, if specified, place with place_id = to optional $pn_id parameter
 	 */
 	 public function getHierarchyName($pn_id=null) {
-	 	$t_list = new ca_lists();
+	 	$t_list = new ca_list_items();
 	 	if ($pn_id) {
 	 		$t_place = new ca_places($pn_id);
 	 		$vn_hierarchy_id = $t_place->get('hierarchy_id');
@@ -470,7 +472,6 @@ class ca_places extends BundlableLabelableBaseModelWithAttributes implements IBu
 	 		$vn_hierarchy_id = $this->get('hierarchy_id');
 	 	}
 	 	$t_list->load($vn_hierarchy_id);
-	 	
 	 	return $t_list->getLabelForDisplay(false);
 	 }
 	# ------------------------------------------------------
@@ -508,32 +509,45 @@ class ca_places extends BundlableLabelableBaseModelWithAttributes implements IBu
 	/**
 	 *
 	 */
-	public function getPlaceIDsByName($ps_name, $pn_parent_id=null) {
+	public function getPlaceIDsByName($ps_name, $pn_parent_id=null, $pn_type_id=null) {
 		$o_db = $this->getDb();
 		
-		if ($pn_parent_id) {
-			$qr_res = $o_db->query("
-				SELECT DISTINCT cap.place_id
-				FROM ca_places cap
-				INNER JOIN ca_place_labels AS capl ON capl.place_id = cap.place_id
-				WHERE
-					capl.name = ? AND cap.parent_id = ?
-			", (string)$ps_name, (int)$pn_parent_id);
-		} else {
-			$qr_res = $o_db->query("
-				SELECT DISTINCT cap.place_id
-				FROM ca_places cap
-				INNER JOIN ca_place_labels AS capl ON capl.place_id = cap.place_id
-				WHERE
-					capl.name = ?
-			", (string)$ps_name);
-
+		$va_params = array((string)$ps_name);
+		
+		$vs_type_sql = '';
+		if ($pn_type_id) {
+			if(sizeof($va_type_ids = caMakeTypeIDList('ca_places', array($pn_type_id)))) {
+				$vs_type_sql = " AND cap.type_id IN (?)";
+				$va_params[] = $va_type_ids;
+			}
 		}
+		
+		if ($pn_parent_id) {
+			$vs_parent_sql = " AND cap.parent_id = ?";
+			$va_params[] = (int)$pn_parent_id;
+		} 
+		
+		
+		$qr_res = $o_db->query("
+			SELECT DISTINCT cap.place_id
+			FROM ca_places cap
+			INNER JOIN ca_place_labels AS capl ON capl.place_id = cap.place_id
+			WHERE
+				capl.name = ? {$vs_type_sql} {$vs_parent_sql} AND cap.deleted = 0
+		", $va_params);
+		
 		$va_place_ids = array();
 		while($qr_res->nextRow()) {
 			$va_place_ids[] = $qr_res->get('place_id');
 		}
 		return $va_place_ids;
+	}
+	# ------------------------------------------------------
+	/**
+	 *
+	 */
+	public function getIDsByLabel($pa_label_values, $pn_parent_id=null, $pn_type_id=null) {
+		return $this->getPlaceIDsByName($pa_label_values['name'], $pn_parent_id, $pn_type_id);
 	}
 	# ------------------------------------------------------
 }

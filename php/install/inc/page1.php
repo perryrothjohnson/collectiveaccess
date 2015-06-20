@@ -34,7 +34,7 @@
 ?>
 
 <div id='box'>
-	<div id="logo"><img src="<?php print $vs_url_path; ?>/graphics/installLogo.gif"/></div><!-- end logo -->
+	<div id="logo"><img src="<?php print $vs_url_path; ?>/graphics/ca_logo.png"/></div><!-- end logo -->
 	<div id="content">
 	<H1>
 		<?php _p('Version %1 installer (XML)', constant('__CollectiveAccess__')); ?>
@@ -71,11 +71,11 @@
 ?>
 				<div class='profileNotes'>
 <?php
-					_p('More information about standard installation profiles is available on the CollectiveAccess <a href="http://wiki.collectiveaccess.org/index.php?title=Installation_Profiles_in_the_Distribution" target="_blank">project wiki</a>.');
+					_p('More information about standard installation profiles is available on the CollectiveAccess <a href="http://docs.collectiveaccess.org/wiki/Installation_profile" target="_blank">project wiki</a>.');
 ?>
 					<br/><br/>
 <?php
-					_p('Don\'t see a suitable profile? Browse our <a href="http://www.CollectiveAccess.org/support/library" target="_blank">installation profile library</a> for additional configurations developed by the CollectiveAccess user community. To install a new profile simply copy the file into the <i>install/profiles/xml</i> directory on your server and reload the installer in your web browser.');
+					_p('Don\'t see a suitable profile? Browse our <a href="http://www.CollectiveAccess.org/configuration" target="_blank">installation profile library</a> for additional configurations developed by the CollectiveAccess user community. To install a new profile simply copy the file into the <i>install/profiles/xml</i> directory on your server and reload the installer in your web browser.');
 ?>
 				</div>
 			</div><!-- end formItem -->
