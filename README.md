@@ -31,3 +31,5 @@ CollectiveAccess 1.4 on OpenShift
 `$ chmod 757 media`
 13. In a browser, go to [public URL]/install and start CollectiveAccess installation
 14. Type in the administrator's email address, select the installation profile (e.g. California Science Center), and click Begin installation
+15. Once installation is complete, login as administrator with the default password that is displayed
+16. Go to MANAGE > Access control. Under User logins, click the edit icon next to administrator. Change the password, and click Save.
