@@ -1,5 +1,6 @@
 # collectiveaccess
 CollectiveAccess 1.4 on OpenShift
+forked from [github](https://github.com/perryrothjohnson/collectiveaccess)
 
 ## CollectiveAccess
 * [CollectiveAccess](http://www.collectiveaccess.org)
