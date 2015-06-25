@@ -1,9 +1,9 @@
 # collectiveaccess
-CollectiveAccess 1.4 on OpenShift
+CollectiveAccess 1.5 on OpenShift
 
 ## CollectiveAccess
 * [CollectiveAccess](http://www.collectiveaccess.org)
-* [Download CollectiveAccess v1.4](https://github.com/collectiveaccess/providence/tree/release-1.4)
+* [Download CollectiveAccess v1.5](https://github.com/collectiveaccess/providence)
 * [Installing Providence](http://docs.collectiveaccess.org/wiki/Installing_Providence)
 
 ## OpenShift
