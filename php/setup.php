@@ -59,7 +59,7 @@ if (!defined("__CA_APP_DISPLAY_NAME__")) {
 # __CA_ADMIN_EMAIL__ = the email address to receive administrative messages from CollectiveAccess
 #
 if (!defined("__CA_ADMIN_EMAIL__")) {
-	define("__CA_ADMIN_EMAIL__", 'info@put-your-domain-here.com');
+	define("__CA_ADMIN_EMAIL__", 'prothjohnson@cscmail.org');
 }
 
 
