@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <profile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="profile.xsd" useForConfiguration="1" base="base" infoUrl="">
   <profileName>California Science Center</profileName>
-  <profileDescription>Profile created on June 19 2015 at 8:41:48 by CollectiveAccess Administrator</profileDescription>
+  <profileDescription>based on accession sheet at California Science Center, designed for Phase III artifacts</profileDescription>
   <locales>
     <locale lang="en" country="US">English</locale>
     <locale lang="en" country="CA" dontUseForCataloguing="1">English (Canadian)</locale>
@@ -397,7 +397,7 @@
         </label>
       </labels>
       <items>
-        <item idno="dataset" enabled="1" default="0">
+        <item idno="dataset" enabled="0" default="0">
           <labels>
             <label locale="en_US" preferred="1">
               <name_singular>Dataset</name_singular>
@@ -421,7 +421,7 @@
             </label>
           </labels>
         </item>
-        <item idno="interactive_resource" enabled="1" default="0">
+        <item idno="interactive_resource" enabled="0" default="0">
           <labels>
             <label locale="en_US" preferred="1">
               <name_singular>Interactive Resource</name_singular>
@@ -433,7 +433,7 @@
             </label>
           </labels>
         </item>
-        <item idno="moving_image" enabled="1" default="0">
+        <item idno="moving_image" enabled="0" default="0">
           <labels>
             <label locale="fr_FR" preferred="1">
               <name_singular>Image animée</name_singular>
@@ -445,7 +445,7 @@
             </label>
           </labels>
         </item>
-        <item idno="physical_object" enabled="1" default="0">
+        <item idno="physical_object" enabled="1" default="1">
           <labels>
             <label locale="fr_FR" preferred="1">
               <name_singular>Objet physique</name_singular>
@@ -457,7 +457,7 @@
             </label>
           </labels>
         </item>
-        <item idno="service" enabled="1" default="0">
+        <item idno="service" enabled="0" default="0">
           <labels>
             <label locale="en_US" preferred="1">
               <name_singular>Service</name_singular>
@@ -469,7 +469,7 @@
             </label>
           </labels>
         </item>
-        <item idno="software" enabled="1" default="0">
+        <item idno="software" enabled="0" default="0">
           <labels>
             <label locale="fr_FR" preferred="1">
               <name_singular>Logiciel</name_singular>
@@ -481,7 +481,7 @@
             </label>
           </labels>
         </item>
-        <item idno="sound" enabled="1" default="0">
+        <item idno="sound" enabled="0" default="0">
           <labels>
             <label locale="fr_FR" preferred="1">
               <name_singular>Son</name_singular>
@@ -493,7 +493,7 @@
             </label>
           </labels>
         </item>
-        <item idno="still_image" enabled="1" default="0">
+        <item idno="still_image" enabled="0" default="0">
           <labels>
             <label locale="fr_FR" preferred="1">
               <name_singular>Image fixe</name_singular>
@@ -505,7 +505,7 @@
             </label>
           </labels>
         </item>
-        <item idno="text" enabled="1" default="0">
+        <item idno="text" enabled="0" default="0">
           <labels>
             <label locale="en_US" preferred="1">
               <name_singular>Text</name_singular>
@@ -4888,7 +4888,6 @@
           <settings>
             <setting name="minChars">0</setting>
             <setting name="maxChars">65535</setting>
-            <setting name="regex"/>
             <setting name="fieldWidth">40</setting>
             <setting name="fieldHeight">1</setting>
             <setting name="usewysiwygeditor">0</setting>
@@ -4896,10 +4895,8 @@
             <setting name="canBeUsedInSort">1</setting>
             <setting name="suggestExistingValues">0</setting>
             <setting name="suggestExistingValueSort">value</setting>
-            <setting name="default_text"/>
             <setting name="canBeUsedInSearchForm">1</setting>
             <setting name="canBeUsedInDisplay">1</setting>
-            <setting name="displayTemplate"/>
             <setting name="displayDelimiter">,</setting>
           </settings>
         </metadataElement>
@@ -4913,7 +4910,6 @@
           <settings>
             <setting name="minChars">0</setting>
             <setting name="maxChars">65535</setting>
-            <setting name="regex"/>
             <setting name="fieldWidth">40</setting>
             <setting name="fieldHeight">1</setting>
             <setting name="usewysiwygeditor">0</setting>
@@ -4921,10 +4917,8 @@
             <setting name="canBeUsedInSort">1</setting>
             <setting name="suggestExistingValues">0</setting>
             <setting name="suggestExistingValueSort">value</setting>
-            <setting name="default_text"/>
             <setting name="canBeUsedInSearchForm">1</setting>
             <setting name="canBeUsedInDisplay">1</setting>
-            <setting name="displayTemplate"/>
             <setting name="displayDelimiter">,</setting>
           </settings>
         </metadataElement>
@@ -5320,7 +5314,7 @@
           <table>ca_objects</table>
           <settings>
             <setting name="minAttributesPerRow">0</setting>
-            <setting name="maxAttributesPerRow">0</setting>
+            <setting name="maxAttributesPerRow">1</setting>
             <setting name="minimumAttributeBundlesToDisplay">0</setting>
           </settings>
         </restriction>
@@ -5811,7 +5805,6 @@
             <setting name="maxColumns">3</setting>
             <setting name="canBeUsedInSearchForm">1</setting>
             <setting name="canBeUsedInDisplay">1</setting>
-            <setting name="displayTemplate"/>
             <setting name="displayDelimiter">,</setting>
           </settings>
         </metadataElement>
@@ -5825,7 +5818,6 @@
           <settings>
             <setting name="minChars">0</setting>
             <setting name="maxChars">65535</setting>
-            <setting name="regex"/>
             <setting name="fieldWidth">40</setting>
             <setting name="fieldHeight">1</setting>
             <setting name="usewysiwygeditor">0</setting>
@@ -5833,7 +5825,6 @@
             <setting name="canBeUsedInSort">1</setting>
             <setting name="suggestExistingValues">0</setting>
             <setting name="suggestExistingValueSort">value</setting>
-            <setting name="default_text"/>
             <setting name="canBeUsedInSearchForm">1</setting>
             <setting name="canBeUsedInDisplay">1</setting>
           </settings>
@@ -6027,6 +6018,7 @@
       <typeRestrictions>
         <restriction>
           <table>ca_objects</table>
+          <type>physical_object</type>
           <settings>
             <setting name="minAttributesPerRow">0</setting>
             <setting name="maxAttributesPerRow">1</setting>
@@ -6075,7 +6067,6 @@
           <settings>
             <setting name="minChars">0</setting>
             <setting name="maxChars">65535</setting>
-            <setting name="regex"/>
             <setting name="fieldWidth">100</setting>
             <setting name="fieldHeight">6</setting>
             <setting name="usewysiwygeditor">0</setting>
@@ -6091,7 +6082,6 @@
           <settings>
             <setting name="minChars">0</setting>
             <setting name="maxChars">65535</setting>
-            <setting name="regex"/>
             <setting name="fieldWidth">100</setting>
             <setting name="fieldHeight">6</setting>
             <setting name="usewysiwygeditor">0</setting>
@@ -6099,10 +6089,8 @@
             <setting name="canBeUsedInSort">1</setting>
             <setting name="suggestExistingValues">0</setting>
             <setting name="suggestExistingValueSort">value</setting>
-            <setting name="default_text"/>
             <setting name="canBeUsedInSearchForm">1</setting>
             <setting name="canBeUsedInDisplay">1</setting>
-            <setting name="displayTemplate"/>
           </settings>
         </metadataElement>
         <metadataElement code="conservation_display" datatype="Text">
@@ -6115,7 +6103,6 @@
           <settings>
             <setting name="minChars">0</setting>
             <setting name="maxChars">65535</setting>
-            <setting name="regex"/>
             <setting name="fieldWidth">100</setting>
             <setting name="fieldHeight">6</setting>
             <setting name="usewysiwygeditor">0</setting>
@@ -6123,10 +6110,8 @@
             <setting name="canBeUsedInSort">1</setting>
             <setting name="suggestExistingValues">0</setting>
             <setting name="suggestExistingValueSort">value</setting>
-            <setting name="default_text"/>
             <setting name="canBeUsedInSearchForm">1</setting>
             <setting name="canBeUsedInDisplay">1</setting>
-            <setting name="displayTemplate"/>
             <setting name="displayDelimiter">,</setting>
           </settings>
         </metadataElement>
@@ -6171,7 +6156,6 @@
             <setting name="maxColumns">3</setting>
             <setting name="canBeUsedInSearchForm">1</setting>
             <setting name="canBeUsedInDisplay">1</setting>
-            <setting name="displayTemplate"/>
             <setting name="displayDelimiter">,</setting>
           </settings>
         </metadataElement>
@@ -6273,7 +6257,6 @@
       <settings>
         <setting name="canBeUsedInSearchForm">0</setting>
         <setting name="canBeUsedInDisplay">0</setting>
-        <setting name="displayDelimiter"/>
       </settings>
       <elements>
         <metadataElement code="insurance_val" datatype="Currency">
@@ -6313,19 +6296,15 @@
             </label>
           </labels>
           <settings>
-            <setting name="dateRangeBoundaries"/>
-            <setting name="fieldWidth"/>
             <setting name="doesNotTakeLocale">1</setting>
             <setting name="canBeUsedInSort">1</setting>
             <setting name="useDatePicker">0</setting>
             <setting name="mustNotBeBlank">0</setting>
             <setting name="isLifespan">0</setting>
-            <setting name="default_text"/>
             <setting name="suggestExistingValues">0</setting>
             <setting name="suggestExistingValueSort">value</setting>
             <setting name="canBeUsedInSearchForm">1</setting>
             <setting name="canBeUsedInDisplay">1</setting>
-            <setting name="displayTemplate"/>
             <setting name="displayDelimiter">,</setting>
           </settings>
         </metadataElement>
@@ -7437,6 +7416,7 @@
               <bundle>ca_attribute_administrative_division</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
+                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_object_category4">
@@ -7498,10 +7478,50 @@
                 <setting name="readonly"/>
               </settings>
             </placement>
-            <placement code="ca_attribute_dimensions_group1">
-              <bundle>ca_attribute_dimensions_group</bundle>
+            <placement code="ca_attribute_length_dimension1">
+              <bundle>ca_attribute_length_dimension</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
+                <setting name="readonly"/>
+              </settings>
+            </placement>
+            <placement code="ca_attribute_width_dimension14">
+              <bundle>ca_attribute_width_dimension</bundle>
+              <settings>
+                <setting name="sortDirection">ASC</setting>
+                <setting name="readonly"/>
+              </settings>
+            </placement>
+            <placement code="ca_attribute_height_dimension1">
+              <bundle>ca_attribute_height_dimension</bundle>
+              <settings>
+                <setting name="sortDirection">ASC</setting>
+                <setting name="readonly"/>
+              </settings>
+            </placement>
+            <placement code="ca_attribute_weight_dimension1">
+              <bundle>ca_attribute_weight_dimension</bundle>
+              <settings>
+                <setting name="sortDirection">ASC</setting>
+                <setting name="readonly"/>
+              </settings>
+            </placement>
+            <placement code="ca_attribute_prelim_dimms16">
+              <bundle>ca_attribute_prelim_dimms</bundle>
+              <settings>
+                <setting name="sortDirection">ASC</setting>
+                <setting name="readonly"/>
+              </settings>
+            </placement>
+            <placement code="extent17">
+              <bundle>extent</bundle>
+              <settings>
+                <setting name="readonly"/>
+              </settings>
+            </placement>
+            <placement code="extent_units18">
+              <bundle>extent_units</bundle>
+              <settings>
                 <setting name="readonly"/>
               </settings>
             </placement>
@@ -7563,9 +7583,9 @@
                 <setting name="dontShowDeleteButton">0</setting>
                 <setting name="label" locale="en_US">Museum location</setting>
                 <setting name="add_label" locale="en_US">Add museum location</setting>
+                <setting name="maxRelationshipsPerRow">1</setting>
                 <setting name="readonly"/>
                 <setting name="minRelationshipsPerRow"/>
-                <setting name="maxRelationshipsPerRow">1</setting>
               </settings>
             </placement>
             <placement code="ca_movements3">
@@ -7574,9 +7594,9 @@
                 <setting name="list_format">bubbles</setting>
                 <setting name="sortDirection">ASC</setting>
                 <setting name="display_template">^ca_movements.preferred_labels</setting>
-                <setting name="readonly"/>
                 <setting name="dont_include_subtypes_in_type_restriction">0</setting>
                 <setting name="dontShowDeleteButton">0</setting>
+                <setting name="readonly"/>
                 <setting name="minRelationshipsPerRow"/>
                 <setting name="maxRelationshipsPerRow"/>
               </settings>
@@ -7586,6 +7606,12 @@
               <settings>
                 <setting name="sortDirection">ASC</setting>
                 <setting name="readonly"/>
+              </settings>
+            </placement>
+            <placement code="ca_attribute_georeference7">
+              <bundle>ca_attribute_georeference</bundle>
+              <settings>
+                <setting name="sortDirection">ASC</setting>
               </settings>
             </placement>
           </bundlePlacements>
@@ -7601,7 +7627,6 @@
               <bundle>ca_attribute_object_function</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_description1">
@@ -7611,21 +7636,18 @@
                 <setting name="label" locale="en_US">Object description</setting>
                 <setting name="add_label" locale="en_US">Add description</setting>
                 <setting name="width">100</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_historical_signif">
               <bundle>ca_attribute_historical_significance</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_pedigree3">
               <bundle>ca_attribute_pedigree</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_date_manufacture5">
@@ -7640,9 +7662,6 @@
                 <setting name="list_format">bubbles</setting>
                 <setting name="sortDirection">ASC</setting>
                 <setting name="display_template">^ca_object_representations.preferred_labels</setting>
-                <setting name="minRelationshipsPerRow"/>
-                <setting name="maxRelationshipsPerRow"/>
-                <setting name="readonly"/>
                 <setting name="dont_include_subtypes_in_type_restriction">0</setting>
                 <setting name="dontShowDeleteButton">0</setting>
               </settings>
@@ -7651,7 +7670,6 @@
               <bundle>ca_attribute_external_link</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
           </bundlePlacements>
@@ -7671,9 +7689,6 @@
                 <setting name="display_template">^ca_objects.preferred_labels</setting>
                 <setting name="dont_include_subtypes_in_type_restriction">0</setting>
                 <setting name="dontShowDeleteButton">0</setting>
-                <setting name="readonly"/>
-                <setting name="minRelationshipsPerRow"/>
-                <setting name="maxRelationshipsPerRow"/>
               </settings>
             </placement>
           </bundlePlacements>
@@ -7689,35 +7704,28 @@
               <bundle>ca_attribute_owner</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_object_contact2">
               <bundle>ca_attribute_object_contact</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="acquisition_type_id3">
               <bundle>acquisition_type_id</bundle>
-              <settings>
-                <setting name="readonly"/>
-              </settings>
             </placement>
             <placement code="ca_attribute_donor3">
               <bundle>ca_attribute_donor</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
                 <setting name="label" locale="en_US">Donor, Lender, Vendor, Transfer Party</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_donor_attribution">
               <bundle>ca_attribute_donor_attribution</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_loans1">
@@ -7730,8 +7738,6 @@
                 <setting name="dontShowDeleteButton">0</setting>
                 <setting name="label" locale="en_US">Loan info</setting>
                 <setting name="add_label" locale="en_US">Add loan info</setting>
-                <setting name="readonly"/>
-                <setting name="minRelationshipsPerRow"/>
                 <setting name="maxRelationshipsPerRow">1</setting>
               </settings>
             </placement>
@@ -7739,14 +7745,12 @@
               <bundle>ca_attribute_purchase_price</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_insurance_group7">
               <bundle>ca_attribute_insurance_group</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
           </bundlePlacements>
@@ -7762,7 +7766,6 @@
               <bundle>ca_attribute_condition</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_format_text1">
@@ -7771,7 +7774,6 @@
                 <setting name="sortDirection">ASC</setting>
                 <setting name="label" locale="en_US">Object materials</setting>
                 <setting name="add_label" locale="en_US">Add material</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_msds8">
@@ -7779,42 +7781,36 @@
               <settings>
                 <setting name="add_label" locale="en_US">Add material safety data sheet</setting>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_handling_and_main">
               <bundle>ca_attribute_handling_and_maintenance</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_conservation_stra">
               <bundle>ca_attribute_conservation_strategy</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_environmental_req">
               <bundle>ca_attribute_environmental_requirements</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_est_restoration_c">
               <bundle>ca_attribute_est_restoration_cost</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
             <placement code="ca_attribute_restoration_cost_">
               <bundle>ca_attribute_restoration_cost_source</bundle>
               <settings>
                 <setting name="sortDirection">ASC</setting>
-                <setting name="readonly"/>
               </settings>
             </placement>
           </bundlePlacements>
@@ -10792,6 +10788,11 @@
         <action>can_delete_ca_loans</action>
         <action>can_search_ca_loans</action>
         <action>can_browse_ca_loans</action>
+        <action>can_create_ca_movements</action>
+        <action>can_edit_ca_movements</action>
+        <action>can_delete_ca_movements</action>
+        <action>can_search_ca_movements</action>
+        <action>can_browse_ca_movements</action>
         <action>can_create_ca_lists</action>
         <action>can_edit_ca_lists</action>
         <action>can_delete_ca_lists</action>
@@ -10866,7 +10867,7 @@
     </group>
   </groups>
   <displays>
-    <display code="accession_sheet" type="ca_objects" system="0">
+    <display code="accession_sheet_display" type="ca_objects" system="1">
       <labels>
         <label locale="en_US">
           <name>Accession sheet</name>
@@ -10878,6 +10879,17 @@
           <settings>
             <setting name="label" locale="en_US">Accession number</setting>
             <setting name="maximum_length">100</setting>
+          </settings>
+        </placement>
+        <placement code="ca_objects_altID">
+          <bundle>ca_objects.altID</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">2048</setting>
+            <setting name="filter"/>
+            <setting name="bottom_line"/>
           </settings>
         </placement>
         <placement code="ca_objects_administrative_division">
@@ -11003,15 +11015,14 @@
             <setting name="filter"/>
           </settings>
         </placement>
-        <placement code="ca_objects_dc_format">
-          <bundle>ca_objects.dc_format</bundle>
+        <placement code="ca_objects_format_text">
+          <bundle>ca_objects.format_text</bundle>
           <settings>
             <setting name="label" locale="en_US">Object materials</setting>
             <setting name="format"/>
             <setting name="delimiter"/>
             <setting name="maximum_length">2048</setting>
             <setting name="filter"/>
-            <setting name="sense">singular</setting>
           </settings>
         </placement>
         <placement code="ca_objects_description">
@@ -11037,6 +11048,50 @@
             <setting name="restrict_to_relationship_types"/>
             <setting name="restrict_to_types"/>
             <setting name="show_hierarchy">1</setting>
+          </settings>
+        </placement>
+        <placement code="ca_objects_length_dimension">
+          <bundle>ca_objects.length_dimension</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">2048</setting>
+            <setting name="filter"/>
+            <setting name="bottom_line"/>
+          </settings>
+        </placement>
+        <placement code="ca_objects_width_dimension">
+          <bundle>ca_objects.width_dimension</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">2048</setting>
+            <setting name="filter"/>
+            <setting name="bottom_line"/>
+          </settings>
+        </placement>
+        <placement code="ca_objects_height_dimension">
+          <bundle>ca_objects.height_dimension</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">2048</setting>
+            <setting name="filter"/>
+            <setting name="bottom_line"/>
+          </settings>
+        </placement>
+        <placement code="ca_objects_weight_dimension">
+          <bundle>ca_objects.weight_dimension</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">2048</setting>
+            <setting name="filter"/>
+            <setting name="bottom_line"/>
           </settings>
         </placement>
         <placement code="ca_objects_condition">
@@ -11072,6 +11127,107 @@
         </placement>
         <placement code="ca_objects_documentation_info">
           <bundle>ca_objects.documentation_info</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">2048</setting>
+            <setting name="filter"/>
+          </settings>
+        </placement>
+      </bundlePlacements>
+    </display>
+    <display code="donor_sheet" type="ca_entities" system="1">
+      <labels>
+        <label locale="en_US">
+          <name>donor sheet</name>
+        </label>
+      </labels>
+      <bundlePlacements>
+        <placement code="ca_entities_preferred_labels">
+          <bundle>ca_entities.preferred_labels</bundle>
+          <settings>
+            <setting name="label" locale="en_US">Donor name</setting>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">100</setting>
+          </settings>
+        </placement>
+        <placement code="ca_entities_email">
+          <bundle>ca_entities.email</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">2048</setting>
+            <setting name="filter"/>
+          </settings>
+        </placement>
+        <placement code="ca_entities_telephone">
+          <bundle>ca_entities.telephone</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">2048</setting>
+            <setting name="filter"/>
+          </settings>
+        </placement>
+        <placement code="ca_entities_address">
+          <bundle>ca_entities.address</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="maximum_length">2048</setting>
+            <setting name="filter"/>
+            <setting name="bottom_line"/>
+          </settings>
+        </placement>
+        <placement code="ca_loans">
+          <bundle>ca_loans</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="remove_first_items"/>
+            <setting name="hierarchy_order">ASC</setting>
+            <setting name="hierarchy_limit"/>
+            <setting name="hierarchical_delimiter"> ➔ </setting>
+            <setting name="restrict_to_relationship_types"/>
+            <setting name="restrict_to_types"/>
+            <setting name="show_hierarchy"/>
+          </settings>
+        </placement>
+        <placement code="ca_objects">
+          <bundle>ca_objects</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="remove_first_items"/>
+            <setting name="hierarchy_order">ASC</setting>
+            <setting name="hierarchy_limit"/>
+            <setting name="hierarchical_delimiter"> ➔ </setting>
+            <setting name="restrict_to_relationship_types"/>
+            <setting name="restrict_to_types"/>
+            <setting name="show_hierarchy"/>
+          </settings>
+        </placement>
+        <placement code="ca_entities_related">
+          <bundle>ca_entities.related</bundle>
+          <settings>
+            <setting name="label" locale="en_US"/>
+            <setting name="format"/>
+            <setting name="delimiter"/>
+            <setting name="remove_first_items"/>
+            <setting name="hierarchy_order">ASC</setting>
+            <setting name="hierarchy_limit"/>
+            <setting name="hierarchical_delimiter"> ➔ </setting>
+          </settings>
+        </placement>
+        <placement code="ca_entities_internal_notes">
+          <bundle>ca_entities.internal_notes</bundle>
           <settings>
             <setting name="label" locale="en_US"/>
             <setting name="format"/>
@@ -11346,36 +11502,167 @@
         <setting name="form_width">3</setting>
       </settings>
       <bundlePlacements>
+        <placement code="p35">
+          <bundle>ca_object_labels.name</bundle>
+          <settings>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
         <placement code="p36">
+          <bundle>ca_objects.type_id</bundle>
+          <settings>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p37">
+          <bundle>ca_objects.dc_type</bundle>
+          <settings>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p38">
+          <bundle>ca_objects.item_classification</bundle>
+          <settings>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p39">
+          <bundle>ca_objects.status</bundle>
+          <settings>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+      </bundlePlacements>
+    </searchForm>
+    <searchForm code="default" type="ca_objects" system="0">
+      <labels>
+        <label locale="en_US">
+          <name>object_search</name>
+        </label>
+      </labels>
+      <settings>
+        <setting name="form_width">1</setting>
+      </settings>
+      <bundlePlacements>
+        <placement code="p40">
+          <bundle>ca_objects.idno</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p41">
           <bundle>ca_object_labels.name</bundle>
           <settings>
             <setting name="label" locale="1"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
+        <placement code="p49">
+          <bundle>ca_objects.acquisition_type</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p50">
+          <bundle>ca_objects.length_dimension</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p51">
+          <bundle>ca_objects.width_dimension</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p52">
+          <bundle>ca_objects.height_dimension</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p53">
+          <bundle>ca_objects.weight_dimension</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p54">
+          <bundle>ca_objects.prelim_dimms</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p55">
+          <bundle>ca_objects.on_display</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p56">
+          <bundle>ca_storage_location_labels.name</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p57">
+          <bundle>ca_objects.intended_gallery_location</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+      </bundlePlacements>
+    </searchForm>
+    <searchForm code="default" type="ca_entities" system="0">
+      <labels>
+        <label locale="en_US">
+          <name>donor_search</name>
+        </label>
+      </labels>
+      <settings>
+        <setting name="form_width">1</setting>
+      </settings>
+      <bundlePlacements>
         <placement code="p44">
-          <bundle>ca_objects.type_id</bundle>
+          <bundle>ca_entities.address</bundle>
           <settings>
             <setting name="label" locale="1"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p45">
-          <bundle>ca_objects.dc_type</bundle>
+          <bundle>ca_entity_labels.displayname</bundle>
           <settings>
             <setting name="label" locale="1"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p46">
-          <bundle>ca_objects.item_classification</bundle>
+          <bundle>ca_entities.email</bundle>
           <settings>
             <setting name="label" locale="1"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p47">
-          <bundle>ca_objects.status</bundle>
+          <bundle>ca_entities.type_id</bundle>
+          <settings>
+            <setting name="label" locale="1"/>
+            <setting name="width">100px</setting>
+          </settings>
+        </placement>
+        <placement code="p48">
+          <bundle>ca_entities.telephone</bundle>
           <settings>
             <setting name="label" locale="1"/>
             <setting name="width">100px</setting>
