@@ -11547,77 +11547,77 @@
         <placement code="p40">
           <bundle>ca_objects.idno</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p41">
           <bundle>ca_object_labels.name</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p49">
           <bundle>ca_objects.acquisition_type</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p50">
           <bundle>ca_objects.length_dimension</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p51">
           <bundle>ca_objects.width_dimension</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p52">
           <bundle>ca_objects.height_dimension</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p53">
           <bundle>ca_objects.weight_dimension</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p54">
           <bundle>ca_objects.prelim_dimms</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p55">
           <bundle>ca_objects.on_display</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p56">
           <bundle>ca_storage_location_labels.name</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p57">
           <bundle>ca_objects.intended_gallery_location</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
@@ -11636,35 +11636,35 @@
         <placement code="p44">
           <bundle>ca_entities.address</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p45">
           <bundle>ca_entity_labels.displayname</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p46">
           <bundle>ca_entities.email</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p47">
           <bundle>ca_entities.type_id</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
         <placement code="p48">
           <bundle>ca_entities.telephone</bundle>
           <settings>
-            <setting name="label" locale="1"/>
+            <setting name="label" locale="en_US"/>
             <setting name="width">100px</setting>
           </settings>
         </placement>
