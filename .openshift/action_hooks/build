@@ -1,11 +1,11 @@
-#!/bin/bash
+# !/bin/bash
 # This is a simple build script and will be executed on your CI system if 
 # available.  Otherwise it will execute while your application is stopped
 # before the deploy step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
-#cd $OPENSHIFT_DATA_DIR
-#mkdir bin
-#wget http://ffmpeg.gusari.org/static/64bit/ffmpeg.static.64bit.2013-12-06.tar.gz
-#tar -xvf ffmpeg.static.64bit.2013-12-06.tar.gz
-#cd ffmpeg.static.64bit.2013-12-06
-#./ffmpeg --prefix=$OPENSHIFT_DATA_DIR/bin --bindir=$OPENSHIFT_DATA_DIR/bin
+# cd $OPENSHIFT_DATA_DIR
+# mkdir bin
+# wget http://ffmpeg.gusari.org/static/64bit/ffmpeg.static.64bit.2013-12-06.tar.gz
+# tar -xvf ffmpeg.static.64bit.2013-12-06.tar.gz
+# cd ffmpeg.static.64bit.2013-12-06
+# ./ffmpeg --prefix=$OPENSHIFT_DATA_DIR/bin --bindir=$OPENSHIFT_DATA_DIR/bin
