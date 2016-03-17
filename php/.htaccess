@@ -13,3 +13,7 @@ Allow from all
 <FilesMatch "^.*\.(css|gif|jpg|png|js|woff|ttf|swf|map|m4v|xml|ply|stl)$">
         Allow from all
 </FilesMatch>
+
+php_value post_max_size 200M
+php_value upload_max_filesize 200M
+php_value memory_limit 256M
