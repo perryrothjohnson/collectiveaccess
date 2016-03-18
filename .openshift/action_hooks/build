@@ -1,11 +1,31 @@
-# !/bin/bash
-# This is a simple build script and will be executed on your CI system if 
-# available.  Otherwise it will execute while your application is stopped
-# before the deploy step.  This script gets executed directly, so it
-# could be python, php, ruby, etc.
-# cd $OPENSHIFT_DATA_DIR
-# mkdir bin
-# wget http://ffmpeg.gusari.org/static/64bit/ffmpeg.static.64bit.2013-12-06.tar.gz
-# tar -xvf ffmpeg.static.64bit.2013-12-06.tar.gz
-# cd ffmpeg.static.64bit.2013-12-06
-# ./ffmpeg --prefix=$OPENSHIFT_DATA_DIR/bin --bindir=$OPENSHIFT_DATA_DIR/bin
+#!/bin/bash
+# This script is executed while the app is rebuilt
+echo "*** BUILD ***"
+cd $OPENSHIFT_DATA_DIR
+mkdir bin
+# check if ffmpeg doesn't exist
+if [ ! -f ./bin/ffmpeg ]
+then
+    # install ffmpeg
+    wget http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
+    tar -xvf ffmpeg-release-64bit-static.tar.xz
+    cd ffmpeg-2.8.5-64bit-static
+    cp ffmpeg $OPENSHIFT_DATA_DIR/bin
+else
+    # skip ahead, ffmpeg is already installed
+    echo "ffmpeg already installed ... skipping download and install"
+fi
+# check if exiftool doesn't exist
+if [ ! -f ./bin/exiftool ]
+then
+    # install exiftool
+    cd $OPENSHIFT_DATA_DIR
+    wget http://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-10.05.tar.gz
+    tar -xvf Image-ExifTool-10.05.tar.gz
+    cd Image-ExifTool-10.05
+    cp exiftool $OPENSHIFT_DATA_DIR/bin
+    cp -R lib $OPENSHIFT_DATA_DIR/bin
+else
+    # skip ahead, exiftool is already installed
+    echo "exiftool already installed ... skipping download and install"
+fi
