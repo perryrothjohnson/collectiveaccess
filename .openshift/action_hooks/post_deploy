@@ -37,3 +37,8 @@ then
 else
     echo "*** ERROR: setup.php failed to restore! ***"
 fi
+# add writeable permissions to directories
+#   (ref: http://docs.collectiveaccess.org/wiki/Installing_Providence#Installing_Providence_.28finally.21.29)
+chmod 757 ${OPENSHIFT_REPO_DIR}php/app/tmp
+chmod 757 ${OPENSHIFT_REPO_DIR}php/vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache
+chmod 757 ${OPENSHIFT_REPO_DIR}php/media

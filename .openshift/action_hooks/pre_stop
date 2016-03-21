@@ -3,7 +3,7 @@
 # available.  Otherwise it will execute before your application is stopped
 # during your push.
 # backup procedure: http://docs.collectiveaccess.org/wiki/Backing_up_a_CollectiveAccess_installation
-echo "*** PRE_BUILD ***"
+echo "*** PRE_STOP ***"
 # backup mysql database
 echo "backup mysql database..."
 cp -R ~/mysql/data/ca ${OPENSHIFT_DATA_DIR}

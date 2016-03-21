@@ -1,5 +1,6 @@
 #!/bin/bash
-# run scheduled tasks included with ResourceSpace by default
+# run scheduled tasks included with CollectiveAccess by default
+#   (ref: http://docs.collectiveaccess.org/wiki/Installing_Providence#Set_up_for_background_encoding_of_media)
 php ${OPENSHIFT_REPO_DIR}php/support/utils/processTaskQueue.php
 # include 'php' at the beginning of the line above
 # (ref: http://stackoverflow.com/questions/10097609/how-to-run-php-file-using-cron-jobs)
