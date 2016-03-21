@@ -41,7 +41,7 @@ if (!defined("__CA_DB_PASSWORD__")) {
 # __CA_DB_DATABASE__ = The name of your CollectiveAccess database
 #
 if (!defined("__CA_DB_DATABASE__")) {
-	define("__CA_DB_DATABASE__", 'ca' );
+	define("__CA_DB_DATABASE__", getenv('OPENSHIFT_APP_NAME') );
 }
 
 
@@ -59,7 +59,7 @@ if (!defined("__CA_APP_DISPLAY_NAME__")) {
 # __CA_ADMIN_EMAIL__ = the email address to receive administrative messages from CollectiveAccess
 #
 if (!defined("__CA_ADMIN_EMAIL__")) {
-	define("__CA_ADMIN_EMAIL__", 'prothjohnson@cscmail.org');
+	define("__CA_ADMIN_EMAIL__", 'cscresourcespace@gmail.com');
 }
 
 
@@ -73,13 +73,13 @@ if (!defined("__CA_ADMIN_EMAIL__")) {
 # __CA_SMTP_SERVER__ = server to use for outgoing mail
 #
 if (!defined("__CA_SMTP_SERVER__")) {
-	define("__CA_SMTP_SERVER__", 'localhost');
+	define("__CA_SMTP_SERVER__", 'smtp.sendgrid.net');
 }
 
 # __CA_SMTP_PORT__ = port to use for outgoing mail
 #
 if (!defined("__CA_SMTP_PORT__")) {
-	define("__CA_SMTP_PORT__", 25);
+	define("__CA_SMTP_PORT__", 465);
 }
 
 
@@ -87,15 +87,15 @@ if (!defined("__CA_SMTP_PORT__")) {
 # If your outgoing (SMTP) mail server requires you to authenticate then you can set the login information
 # below by uncommenting the __CA_SMTP_AUTH__, __CA_SMTP_USER__ and __CA_SMTP_PASSWORD__ lines and providing appropriate values
 #
-#if (!defined("__CA_SMTP_AUTH__")) {
-#	define("__CA_SMTP_AUTH__", 'login');
-#}
-#if (!defined("__CA_SMTP_USER__")) {
-#	define("__CA_SMTP_USER__", 'my_smtp_username');
-#}
-#if (!defined("__CA_SMTP_PASSWORD__")) {
-#	define("__CA_SMTP_PASSWORD__", 'my_smtp_password');
-#}
+if (!defined("__CA_SMTP_AUTH__")) {
+	define("__CA_SMTP_AUTH__", 'login');
+}
+if (!defined("__CA_SMTP_USER__")) {
+	define("__CA_SMTP_USER__", 'my_smtp_username');
+}
+if (!defined("__CA_SMTP_PASSWORD__")) {
+	define("__CA_SMTP_PASSWORD__", 'my_smtp_password');
+}
 
 
 #
@@ -122,7 +122,7 @@ date_default_timezone_set('America/Los_Angeles');
 # available at http://docs.collectiveaccess.org
 #
 if (!defined("__CA_QUEUE_ENABLED__")) {
-	define("__CA_QUEUE_ENABLED__", 0);
+	define("__CA_QUEUE_ENABLED__", 1);
 }
 
 
