@@ -42,3 +42,4 @@ fi
 chmod 757 ${OPENSHIFT_REPO_DIR}php/app/tmp
 chmod 757 ${OPENSHIFT_REPO_DIR}php/vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCache
 chmod 757 ${OPENSHIFT_REPO_DIR}php/media
+echo "added writeable permissions to media, tmp, and DefinitionCache directories"
