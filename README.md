@@ -33,3 +33,12 @@ CollectiveAccess 1.6.1 on OpenShift
 14. Type in the administrator's email address, select the installation profile (e.g. California Science Center), and click Begin installation
 15. Once installation is complete, login as administrator with the default password that is displayed
 16. Go to MANAGE > Access control. Under User logins, click the edit icon next to administrator. Change the password, and click Save.
+
+## Export MySQL database for backup
+1. login to phpmyadmin  
+2. click Export  
+3. export method: custom  
+4. databases: ca  
+5. file name template: `@SERVER@_%Y-%m-%d`  
+6. format-specific options: disable foreign key checks, structure and data  
+7. click Go
