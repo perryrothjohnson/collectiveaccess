@@ -59,7 +59,7 @@ if (!defined("__CA_APP_DISPLAY_NAME__")) {
 # __CA_ADMIN_EMAIL__ = the email address to receive administrative messages from CollectiveAccess
 #
 if (!defined("__CA_ADMIN_EMAIL__")) {
-	define("__CA_ADMIN_EMAIL__", 'cscresourcespace@gmail.com');
+	define("__CA_ADMIN_EMAIL__", 'name@email.com');
 }
 
 
