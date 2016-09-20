@@ -1,6 +1,7 @@
 /nbproject/*
 /app/tmp/*
-app/conf/local/.htaccess
+app/conf/local/*
+setup.php
 /media/*
 !/media/.htaccess
 !/media/README.md

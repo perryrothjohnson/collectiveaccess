@@ -87,15 +87,15 @@ if (!defined("__CA_SMTP_PORT__")) {
 # If your outgoing (SMTP) mail server requires you to authenticate then you can set the login information
 # below by uncommenting the __CA_SMTP_AUTH__, __CA_SMTP_USER__ and __CA_SMTP_PASSWORD__ lines and providing appropriate values
 #
-if (!defined("__CA_SMTP_AUTH__")) {
-	define("__CA_SMTP_AUTH__", 'login');
-}
-if (!defined("__CA_SMTP_USER__")) {
-	define("__CA_SMTP_USER__", 'my_smtp_username');
-}
-if (!defined("__CA_SMTP_PASSWORD__")) {
-	define("__CA_SMTP_PASSWORD__", 'my_smtp_password');
-}
+#if (!defined("__CA_SMTP_AUTH__")) {
+#	define("__CA_SMTP_AUTH__", 'login');
+#}
+#if (!defined("__CA_SMTP_USER__")) {
+#	define("__CA_SMTP_USER__", 'my_smtp_username');
+#}
+#if (!defined("__CA_SMTP_PASSWORD__")) {
+#	define("__CA_SMTP_PASSWORD__", 'my_smtp_password');
+#}
 
 
 #
@@ -341,6 +341,10 @@ define('__CA_MEMCACHED_PORT__', 11211);
 # Host and port for redis
 define('__CA_REDIS_HOST__', 'localhost');
 define('__CA_REDIS_PORT__', 6379);
+# Redis database index. This is useful if you want to use your Redis instance for several applications.
+# By default Redis is set up with 16 databases, indexed 0 through 15. CollectiveAccess will use the first
+# (index 0) unless told otherwise.
+define('__CA_REDIS_DB__', 0);
 # --------------------------------------------------------------------------------------------
 
 # include version number
