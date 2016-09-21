@@ -2,7 +2,7 @@
 # This script is executed after the app is rebuilt and deployed
 echo "*** POST_DEPLOY ***"
 # copy mysql database back into the app
-cp -R ${OPENSHIFT_DATA_DIR}ca ~/mysql/data
+cp -R ${OPENSHIFT_DATA_DIR}collectiveaccess ~/mysql/data
 # check if mysql database was restored properly
 if [ -e ~/mysql/data/ca ]
 then
